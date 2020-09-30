@@ -78,7 +78,9 @@ def _estimate_3gl_tc_area_loss(sci_name, remaining, gl_dict, gfc_final_yr):
 
 def _postprocess_results_set_write_to_file(results_dict, gl_table_path, fields,
                                            gfc_final_yr):
-    """
+    """Derive estimates of remaining tree cover from the loss estimates returned by
+    GEE, use them to compute three-generation-length estimates and write a row
+    containing all the results to the output file.
 
     :param results_dict: A dictionary containing the results returned by GEE.
     :param gl_table_path: Path to a CSV file containing species' generation
@@ -122,7 +124,9 @@ def _postprocess_results_set_write_to_file(results_dict, gl_table_path, fields,
 
 
 def postprocess(gl_table_path):
-    """
+    """Post-process the results for every range map which was analysed: process the
+    results files in the storage bucket, derive additional results and write
+    everything to an output file.
 
     :param gl_table_path: Path to a CSV file containing species' generation
         lengths. See README for required format.

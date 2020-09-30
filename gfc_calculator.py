@@ -58,7 +58,9 @@ class _Species(object):
         self._max_alt = max_alt
 
     def __call__(self, forest_change_img):
-        """
+        """This function is mapped over the ImageCollection of GFC Images. It
+        computes the area of forest_change_img within the range map which is being
+        analysed.
 
         :param forest_change_img: An Image derived from the GFC Image.
         """
@@ -310,9 +312,6 @@ def analyse(alt_lims_table_path, range_map_ic_gee_path, global_canopy_cover_thre
 
         _run(asset_id, gfc_ic, min_alt, max_alt, sci_name, sisid, breeding, aoo_thresh)
         print('Done.')
-
-    # FIXME: There's surely supposed to be an expression here.
-    return
 
 
 # NOTE: This is just here for testing. This makes it possible to run the analysis

@@ -37,9 +37,10 @@ GCS_BUCKET_PATH = 'gs://' + GCS_BUCKET_NAME
 
 
 def _get_gee_home_folder_path():
-    """
+    """If the current user already has a GEE home folder, get a path to it. If not,
+    create one and return a path to it.
 
-    :return:
+    :return: A GEE path to the user's home folder.
     """
     earth_engine_ls_output = os.popen('earthengine ls').read()
     if "users" in earth_engine_ls_output:
@@ -76,9 +77,9 @@ def _create_forest_dep_df(forest_dep_spreadsheet_path):
 
 
 def _filter_gdf(botw_gdf_w_forest_deps):
-    """
+    """Filter rows by forest dependency, presence, origin and season.
 
-    :param botw_gdf_w_forest_deps:
+    :param botw_gdf_w_forest_deps: Unfiltered geodatabase.
     :return:
     """
     #   Filter out every row in which the forest dependency isn't "Medium" or "High".
@@ -101,9 +102,10 @@ def _filter_gdf(botw_gdf_w_forest_deps):
 
 
 def _dissolve(botw_gdf_w_forest_deps):
-    """
+    """Dissolve rows together so that there is a row for each species' breeding and
+    non-breeding range.
 
-    :param botw_gdf_w_forest_deps:
+    :param botw_gdf_w_forest_deps: Undissolved geodatabase.
     :return:
     """
     # Deep copy botw_geodatabase_gdf_with_forest_deps.
@@ -136,10 +138,9 @@ def _dissolve(botw_gdf_w_forest_deps):
 
 
 def _clear_dir(dir_path):
-    """
+    """If there is a directory at dir_path, empty it. If not, create it.
 
-    :param dir_path:
-    :return:
+    :param dir_path: Path to a directory.
     """
     if os.path.isdir(dir_path):
         shutil.rmtree(dir_path)
@@ -148,10 +149,10 @@ def _clear_dir(dir_path):
 
 
 def _rasterise_gdf(dissolved):
-    """Rasterise the
+    """Rasterise the GeoDataFrame dissolved.
 
-    :param dissolved:
-    :return:
+    :param dissolved: A GeoDataFrame in which there is one row for each desired range
+        map.
     """
     with open(SCI_NAME_RASTER_FILENAME_MAPPING_FP, 'a', newline='') as snrfmf:
         snrfmf_writer = csv.writer(snrfmf)
@@ -281,13 +282,18 @@ def _process_chunk(geodatabase_path, layer_name, forest_dep_df, start_row_no,
     """Read, filter, dissolve, rasterise and upload a chunk of the range map
     geodatabase.
 
-    :param geodatabase_path:
-    :param layer_name:
-    :param forest_dep_df:
-    :param start_row_no:
-    :param chunk_size:
-    :param range_map_ic_gee_path:
-    :return:
+    :param geodatabase_path: Path to an ESRI file geodatabase containing range maps
+        to be analysed.
+    :param layer_name: Name of the layer in the geodatabase at geodatabase_path
+        containing the range maps to be analysed.
+    :param forest_dep_df: Path to a spreadsheet containing species' forest dependency
+        information.
+    :param start_row_no: The index of the first row in the chunk.
+    :param chunk_size: The maximum number of rows to read. (Note that chunk size
+        isn't really constant: in all but the last chunk, rows are dropped.)
+    :param range_map_ic_gee_path: GEE path to an ImageCollection to upload the
+        generated rasters to.
+    :return: The index of the last row which was processed.
     """
     chunk_slice = slice(start_row_no, start_row_no + chunk_size)
 
@@ -335,10 +341,11 @@ def _process_chunk(geodatabase_path, layer_name, forest_dep_df, start_row_no,
 
 
 def preprocess(geodatabase_path, layer_name, forest_dep_spreadsheet_path):
-    """
+    """Read and filter geodatabase, dissolve rows, rasterise, compress and upload
+    compressed rasters to GEE.
 
     :param geodatabase_path: Path to an ESRI file geodatabase containing range maps
-        to be analysed
+        to be analysed.
     :param layer_name: Name of the layer in the geodatabase at geodatabase_path
         containing the range maps to be analysed.
     :param forest_dep_spreadsheet_path: Path to a spreadsheet containing species'
@@ -352,10 +359,10 @@ def preprocess(geodatabase_path, layer_name, forest_dep_spreadsheet_path):
     #  from the very beginning, there isn't really any point in this. I suppose it
     #  might make sense to add a start row parameter to the parameter list of the
     #  program. The user would just need to read the row the last execution got up to
-    #  from standard output and and then stick this is. However, the user might not
+    #  from standard output and and then stick this in. However, the user might not
     #  get it exactly right. For example, what if the last chunk contained rows i to
     #  j, but died before processing all of them? It wouldn't be obvious to a user
-    #  what row they need to start from and things would get messy. The solution,
+    #  which row they need to start from and things would get messy. The solution,
     #  really, is just not to use this mapping file...
     if os.path.exists(SCI_NAME_RASTER_FILENAME_MAPPING_FP):
         os.remove(SCI_NAME_RASTER_FILENAME_MAPPING_FP)

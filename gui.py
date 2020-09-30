@@ -83,6 +83,7 @@ submit_btn = tk.Button(master=gui,
                        command=call_main_with_args,
                        fg='green')
 
+
 # Add widgets to the GUI.
 row_no = 1
 geodatabase_btn.grid(row=row_no, column=1, sticky='ew')
