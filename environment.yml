@@ -1,0 +1,11 @@
+name: Bird_Extinction_Risk_Project
+channels:
+  - defaults
+dependencies:
+  - python=3.7
+  - rasterio
+  - geopandas
+  - earthengine-api
+  - scikit-learn
+  - xlrd
+prefix: C:\Users\dbwes\anaconda3\envs\Bird_Extinction_Risk_Project
