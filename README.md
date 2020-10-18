@@ -57,7 +57,17 @@ If you're a bit more techy there's also a command-line interface, `cli.py`.
 Unfortunately, the tool is very picky about the format of its inputs. It's designed to receive the necessary data in the formats used by BirdLife, hence the peculiarities. 
 
 ### Range map geodatabase
-An ESRI file geodatabase containing the range maps to be analysed.
+An ESRI file geodatabase containing the range maps to be analysed. The attribute table of the layer containing the range maps needs to have the following columns.
+
+| Column name   | What needs to be in it?                     |
+|---------------|---------------------------------------------|
+| `SISID`       | SIS ID                                      |
+| `SCINAME`     | Scientific name                             |
+| `PRESENCE`    | A number between 1 and 6 encoding presence* |
+| `ORIGIN`      | A number between 1 and 6 encoding origin*   |
+| `SEASONAL`    | A number between 1 and 5 encoding season*   |
+
+*See BirdLife documentation for an explanation of the presence, origin and season codes.
 
 ### Layer name
 The name of the layer in the geodatabase containing the range maps.
